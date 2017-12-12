@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServidorV2{
+public class Servidor{
 	private static ServerSocket serverSocket;
 	private static Socket socket;
 
@@ -14,6 +14,16 @@ public class ServidorV2{
 			System.out.println("Error al inciar el servidor :(");
 			return false;
 		}
+	}
+
+	public static boolean generaClave( ){
+		GeneradorDeClaves generadorDeClaves;
+
+		generadorDeClaves = new GeneradorDeClaves( );
+
+		generadorDeClaves.buscaNombre("tarjetahabiente");
+		generadorDeClaves.generaClave( );
+		generadorDeClaves.escribeArchivo(generadorDeClaves.getNombre( ));
 	}
 
 	public static boolean aceptaConexion( ){
@@ -41,6 +51,7 @@ public class ServidorV2{
 		System.out.println("Escuchando por el puerto 8000");
 		if(iniciaServidor( )){
 			System.out.println("Esperando a que los clientes se conecten...");
+			generaClave( );
 			while(true){
 				if(aceptaConexion( )){
 					conexion = new Conexion(socket, socket.getInetAddress( ).getHostName( ));

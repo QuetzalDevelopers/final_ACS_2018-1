@@ -18,7 +18,7 @@ public class ClienteV2{
 	private static String password;
 	private static byte[ ] passwordCifrada;
 	private static String respuesta;
-
+	
 	public static boolean conectar(String direccion, int puerto){
 		try{
 			socket = new Socket(direccion, puerto);
@@ -99,7 +99,7 @@ public class ClienteV2{
 		socket = null;
 		console = System.console( );
 		teclado = new Scanner(System.in);
-
+		
 		System.out.println("Me conecto al puerto 8000 del servidor");
 		if(conectar(a[0], 8000)){
 			System.out.print("Nombre de usuario: ");

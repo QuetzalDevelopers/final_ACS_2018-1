@@ -14,6 +14,7 @@ import javax.crypto.Cipher;
 public class Conexion extends Thread{
 	private Socket socket;
 	private String nombreCliente;
+	private TarjetaHabiente tarjetaHabiente;
 
 	public Conexion(Socket socket, String nombreCliente){
 		super(nombreCliente);
@@ -38,7 +39,7 @@ public class Conexion extends Thread{
 		}
 	}
 
-	public String descifraPassword(Key clave, byte[ ] passwordCifrada, int n){
+	public String descifraCadena(Key clave, byte[ ] cadenaCifrada, int n){
 		Cipher descifrar;
 		byte[ ] textoPlano, buffer;
 		String descifrado;
@@ -46,7 +47,7 @@ public class Conexion extends Thread{
 		buffer = new byte[n];
 
 		for(int i = 0; i < n; i++){
-			buffer[i] = passwordCifrada[i];
+			buffer[i] = cadenaCifrada[i];
 		}
 
 		try{
@@ -57,6 +58,24 @@ public class Conexion extends Thread{
 			return descifrado;
 		}catch(Exception e){
 			return null;
+		}
+	}
+
+	public void creaTarjetaHabiente( ){
+		BufferedReader entrada;
+		String nombre;
+		String numeroCuenta;
+		float saldo;
+
+		try{
+			entrada = new BufferedReader(new FileReader(new File("tarjetahabiente")));
+			nombre = entrada.readLine( );
+			numeroCuenta = entrada.readLine( );
+			saldo = (float) entrada.readLine( );
+			tarjetahabiente = new TarjetaHabiente(nombre, numeroCuenta, saldo);
+			entrada.close( );
+		}catch(IOException){
+			System.out.println("Error al abrir el archivo" + archivo);
 		}
 	}
 
@@ -73,6 +92,7 @@ public class Conexion extends Thread{
 		String linea;
 		String respuesta;
 		int nBytes;
+		boolean bandera;
 
 		respuesta = "Datos incorrectos";
 		passwordCifrada = new byte[64];
@@ -88,29 +108,36 @@ public class Conexion extends Thread{
 				br = new BufferedReader(fr);
 
 				nombreUsuario = dis.readUTF( );
-				nBytes = dis.read(passwordCifrada);
+				nBytes = dis.read(nipCifrado);
 				clave = obtenClave(nombreUsuario);
 				if(clave != null){
-					password = descifraPassword(clave, passwordCifrada, nBytes);
-					if(password != null)
+					nip = descifraPassword(clave, nipCifrado, nBytes);
+					if(password != null){
 						while((linea = br.readLine( ))!= null){
 							String[ ] parte = linea.split(":");
 							if(nombreUsuario.equals(parte[0]))
 								if(password.equals(parte[1])){
-									respuesta = "Datos correctos";
+									System.out.println("Acceso autorizado a " + nombreUsuario);
+									creaTarjetaHabiente( );
+									bandera = true;
 									break;
+								}else{
+									bandera = false;
 								}
 						}
-					else
-						System.out.println("Error al descifrar la contraseña");
-					if(respuesta.equals("Datos correctos"))
-						System.out.println("Acceso autorizado a " + nombreUsuario);
-					else
-						System.out.println("Acceso denegado a " + nombreUsuario);
+						if(bandera){
+							while(bandera){
+							}
+						}else{
+							dos.writeUTF("NIP incorrecto");
+						}
+					}else{
+						System.out.println("Error al descifrar el nip");
+					}
 				}else{
 					respuesta = "Perdí tu clave :(";
 				}
-				dos.writeUTF(respuesta);
+				//dos.writeUTF(respuesta);
 				br.close( );
 				fr.close( );
 			}catch(FileNotFoundException e){

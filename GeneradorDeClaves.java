@@ -11,8 +11,25 @@ import javax.crypto.KeyGenerator;
 
 public class GeneradorDeClaves{
 	private static ArrayList<String> nombres;
+	private static String nombre;
 	private static KeyGenerator generador;
 	private static Key clave;
+
+	public String getNombre( ){
+		return this.nombre;
+	}
+
+	public void buscaNombre(String archivo){
+		BufferedReader entrada;
+
+		try{
+			entrada = new BufferedReader(new FileReader(new File(archivo)));
+			nombre = entrada.readLine( );
+			entrada.close( );
+		}catch(IOException){
+			System.out.println("Error al abrir el archivo" + archivo);
+		}
+	}
 
 	public static boolean buscaNombres( ){
 		BufferedReader entrada;
@@ -38,6 +55,7 @@ public class GeneradorDeClaves{
 			clave = generador.generateKey( );
 			return true;
 		}catch(Exception e){
+			System.out.println("Error al generar la clave");
 			return false;
 		}
 	}
@@ -50,6 +68,7 @@ public class GeneradorDeClaves{
 			salida.close( );
 			return true;
 		}catch(IOException e){
+			System.out.println("Error al escribir el archivo " + identificador +".ser");
 			return false;
 		}
 	}
