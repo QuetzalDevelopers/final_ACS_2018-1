@@ -16,16 +16,6 @@ public class Servidor{
 		}
 	}
 
-	public static boolean generaClave( ){
-		GeneradorDeClaves generadorDeClaves;
-
-		generadorDeClaves = new GeneradorDeClaves( );
-
-		generadorDeClaves.buscaNombre("tarjetahabiente");
-		generadorDeClaves.generaClave( );
-		generadorDeClaves.escribeArchivo(generadorDeClaves.getNombre( ));
-	}
-
 	public static boolean aceptaConexion( ){
 		try{
 			socket = serverSocket.accept( );
@@ -51,7 +41,6 @@ public class Servidor{
 		System.out.println("Escuchando por el puerto 8000");
 		if(iniciaServidor( )){
 			System.out.println("Esperando a que los clientes se conecten...");
-			generaClave( );
 			while(true){
 				if(aceptaConexion( )){
 					conexion = new Conexion(socket, socket.getInetAddress( ).getHostName( ));

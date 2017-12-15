@@ -21,5 +21,13 @@ public class TarjetaHabiente{
 		return this.saldo;
 	}
 
-	
+	public void deposita(float monto){
+		if(monto > 0)
+			saldo = saldo + monto;
+	}
+
+	public void retira(float monto){
+		if(monto > 0 && monto < saldo)
+			saldo = saldo - monto;
+	}
 }
